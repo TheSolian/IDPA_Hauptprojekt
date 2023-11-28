@@ -1,3 +1,4 @@
+import { ThemeButton } from '@/components/ThemeButton'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -9,11 +10,8 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { auth, db } from '@/firebase'
-import { useAppDispatch } from '@/redux/hooks'
-import { setUser } from '@/redux/slices/authSlice'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { doc, getDoc } from 'firebase/firestore'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
@@ -27,7 +25,6 @@ const formSchema = z.object({
 })
 
 const LoginPage: React.FC<LoginPageProps> = ({}) => {
-  const dispatch = useAppDispatch()
   const navigate = useNavigate()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,12 +37,15 @@ const LoginPage: React.FC<LoginPageProps> = ({}) => {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { email, password } = values
 
-    const credentials = await signInWithEmailAndPassword(auth, email, password)
+    await signInWithEmailAndPassword(auth, email, password)
     navigate('/')
   }
 
   return (
     <div className='grid place-content-center min-h-screen'>
+      <div className='absolute top-4 right-4'>
+        <ThemeButton />
+      </div>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

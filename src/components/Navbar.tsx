@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { ThemeButton } from './ThemeButton'
 import UserButton from './UserButton'
 import { Separator } from './ui/separator'
 
@@ -12,7 +13,8 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
         <Link to='/' className='text-3xl font-bold'>
           Fake Bookyto
         </Link>
-        <div>
+        <div className='flex items-center gap-4'>
+          <ThemeButton />
           <UserButton />
         </div>
       </div>
