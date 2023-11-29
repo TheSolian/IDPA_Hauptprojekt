@@ -14,7 +14,7 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
           Fake Bookyto
         </Link>
         <div className='flex items-center gap-4'>
-          <ThemeButton />
+          <ThemeButton variant={'ghost'} />
           <UserButton />
         </div>
       </div>
