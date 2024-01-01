@@ -10,6 +10,7 @@ import LoginPage from './pages/auth/LoginPage'
 import LogoutPage from './pages/auth/LogoutPage'
 import { useAppDispatch } from './redux/hooks'
 import { setUser } from './redux/slices/authSlice'
+import StatsPage from './pages/StatsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -47,6 +48,7 @@ function App() {
         <Route path='/' element={<RootLayout />}>
           <Route index element={<HomePage />} />
           <Route path='logout' element={<LogoutPage />} />
+          <Route path='statistics' element={<StatsPage />} />
         </Route>
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
