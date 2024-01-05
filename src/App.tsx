@@ -13,6 +13,7 @@ import { setUser } from './redux/slices/authSlice'
 import DashboardPage from './pages/DashboardPage'
 import MultipleChoiceCreation from './components/MultipleChoiceCreation'
 import TrueFalseCreation from './components/TrueFalseCreation'
+import StatsPage from './pages/StatsPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -53,6 +54,7 @@ function App() {
           <Route path='dashboard' element={<DashboardPage />} />
           <Route path='/createtruefalse' element={<TrueFalseCreation/>} />
           <Route path='/creatmultiplechoice' element={<MultipleChoiceCreation/>} />
+          <Route path='statistics' element={<StatsPage />} />
         </Route>
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
