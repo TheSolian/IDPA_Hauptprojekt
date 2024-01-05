@@ -43,9 +43,9 @@ const UserButton: React.FC<UserButtonProps> = ({}) => {
         </DropdownMenuItem>
         {user?.role === 'admin' && (
           <DropdownMenuItem>
-            <Link to='/students' className='flex gap-2'>
+            <Link to='/dashboard' className='flex gap-2'>
               <Icons.students />
-              <span>Students</span>
+              <span>Dashboard</span>
             </Link>
           </DropdownMenuItem>
         )}
