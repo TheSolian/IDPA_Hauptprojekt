@@ -14,6 +14,8 @@ import DashboardPage from './pages/DashboardPage'
 import MultipleChoiceCreation from './components/MultipleChoiceCreation'
 import TrueFalseCreation from './components/TrueFalseCreation'
 import StatsPage from './pages/StatsPage'
+import DashboardLayoutProps from './pages/DashboardLayout'
+import DashboardLayout from './pages/DashboardLayout'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -51,15 +53,18 @@ function App() {
         <Route path='/' element={<RootLayout />}>
           <Route index element={<HomePage />} />
           <Route path='logout' element={<LogoutPage />} />
-          <Route path='dashboard' element={<DashboardPage />} />
-          <Route path='/createtruefalse' element={<TrueFalseCreation/>} />
-          <Route path='/creatmultiplechoice' element={<MultipleChoiceCreation/>} />
+          <Route path='dashboard' element={<DashboardLayout />}>
+            <Route path='createtruefalse' element={<TrueFalseCreation />} />
+            <Route
+              path='createmultiplechoice'
+              element={<MultipleChoiceCreation />}
+            />
+          </Route>
           <Route path='statistics' element={<StatsPage />} />
         </Route>
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
         </Route>
-        
       </Routes>
     </Router>
   )
