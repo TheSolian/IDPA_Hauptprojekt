@@ -10,6 +10,9 @@ import LoginPage from './pages/auth/LoginPage'
 import LogoutPage from './pages/auth/LogoutPage'
 import { useAppDispatch } from './redux/hooks'
 import { setUser } from './redux/slices/authSlice'
+import DashboardPage from './pages/DashboardPage'
+import MultipleChoiceCreation from './components/MultipleChoiceCreation'
+import TrueFalseCreation from './components/TrueFalseCreation'
 import StatsPage from './pages/StatsPage'
 
 function App() {
@@ -48,11 +51,15 @@ function App() {
         <Route path='/' element={<RootLayout />}>
           <Route index element={<HomePage />} />
           <Route path='logout' element={<LogoutPage />} />
+          <Route path='dashboard' element={<DashboardPage />} />
+          <Route path='/createtruefalse' element={<TrueFalseCreation/>} />
+          <Route path='/creatmultiplechoice' element={<MultipleChoiceCreation/>} />
           <Route path='statistics' element={<StatsPage />} />
         </Route>
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
         </Route>
+        
       </Routes>
     </Router>
   )
