@@ -23,9 +23,9 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({}) => {
             View questions
           </div>
         </Link>
-        <Link to='/dashboard/createmultiplechoice'>
+        <Link to='/dashboard/studentsquizzes'>
           <div className='text-center py-3 bg-popover hover:bg-accent rounded-sm border'>
-            Create a multiple choice question
+            View Quizzes
           </div>
         </Link>
       </div>

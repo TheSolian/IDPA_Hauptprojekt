@@ -16,6 +16,9 @@ import StatsPage from './pages/StatsPage'
 import DashboardLayout from './pages/DashboardLayout'
 import QuestionList from './components/QuestionList'
 import EditPage from './components/EditPage'
+import UserCreation from './components/UserCreation'
+import StudentsQuiz from './pages/StudentsQuiz'
+import StudentsStats from './components/StudentsStats'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -29,12 +32,12 @@ function App() {
         const userId = user.uid
 
         const snapshot = await getDoc(doc(db, 'users', userId))
-        const data = snapshot.data() as { role: string }
+        const data = snapshot.data() as { role: string, username:string }
 
         const newUser: User = {
           id: userId,
           email: user.email!,
-          name: user.displayName || '',
+          name: data.username,
           role: data.role,
         }
 
@@ -61,11 +64,15 @@ function App() {
             />
             <Route path='questions' element={<QuestionList />} />
             <Route path='edit/:id' element={<EditPage />} />
+            <Route path='students' element={<StudentsQuiz />} />
+            <Route path='student/:id' element={<StudentsStats />} />
+
           </Route>
           <Route path='statistics' element={<StatsPage />} />
         </Route>
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
+          <Route path='signup' element={<UserCreation />} />
         </Route>
       </Routes>
     </Router>
