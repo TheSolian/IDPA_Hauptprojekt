@@ -23,7 +23,7 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({}) => {
             View questions
           </div>
         </Link>
-        <Link to='/dashboard/studentsquizzes'>
+        <Link to='/dashboard/students'>
           <div className='text-center py-3 bg-popover hover:bg-accent rounded-sm border'>
             View Quizzes
           </div>
