@@ -103,10 +103,12 @@ const TrueFalseForm: React.FC = () => {
       await addDoc(collection(db, 'questions'), {
         answers: [
           {
+            id: 1,
             correct: values.correctAnswer.correct,
             title: values.correctAnswer.answer,
           },
           {
+            id: 2,
             correct: values.wrongAnswer.correct,
             title: values.wrongAnswer.answer,
           },
