@@ -10,7 +10,8 @@ type Quiz = {
 
 type Question = {
   type: 'trueFalse' | 'multipleChoice'
-  title: string
+  question: string
   explanation: string
   answers: { title: string; correct: boolean }[]
+  categories: string
 }

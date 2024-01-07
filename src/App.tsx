@@ -10,12 +10,12 @@ import LoginPage from './pages/auth/LoginPage'
 import LogoutPage from './pages/auth/LogoutPage'
 import { useAppDispatch } from './redux/hooks'
 import { setUser } from './redux/slices/authSlice'
-import DashboardPage from './pages/DashboardPage'
 import MultipleChoiceCreation from './components/MultipleChoiceCreation'
 import TrueFalseCreation from './components/TrueFalseCreation'
 import StatsPage from './pages/StatsPage'
-import DashboardLayoutProps from './pages/DashboardLayout'
 import DashboardLayout from './pages/DashboardLayout'
+import QuestionList from './components/QuestionList'
+import EditPage from './components/EditPage'
 
 function App() {
   const dispatch = useAppDispatch()
@@ -59,6 +59,8 @@ function App() {
               path='createmultiplechoice'
               element={<MultipleChoiceCreation />}
             />
+            <Route path='questions' element={<QuestionList />} />
+            <Route path='edit/:id' element={<EditPage />} />
           </Route>
           <Route path='statistics' element={<StatsPage />} />
         </Route>

@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { Button } from '@/components/ui/button'
-import { collection, getDocs, doc } from 'firebase/firestore'
+import { collection, getDocs, doc, addDoc } from 'firebase/firestore'
 import { db } from '@/firebase'
 import {
   Form,
@@ -17,15 +17,24 @@ import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
 import { useEffect, useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 
 const formSchema = z.object({
   category: z.string().min(2, {
-    message: 'Explanation must be at least 2 characters.',
+    message: 'Choose a category.',
   }),
   correctAnswer: z.object({
     answer: z.string().min(4, {
@@ -49,6 +58,10 @@ const formSchema = z.object({
 
 const TrueFalseForm: React.FC = () => {
   const [allCategories, setAllCategories] = useState<string[]>([])
+  const [open, setOpen] = useState<boolean>(false)
+  const [categoryName, setCategoryName] = useState<string>('')
+  const [error, setError] = useState<boolean>(false)
+  const [answerError, setAnswerError] = useState<boolean>(false)
 
   async function getCategories() {
     const cats = await getDocs(collection(db, 'categories'))
@@ -64,7 +77,7 @@ const TrueFalseForm: React.FC = () => {
   useEffect(() => {
     getCategories()
     console.log(allCategories)
-  }, [])
+  }, [open])
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,12 +95,65 @@ const TrueFalseForm: React.FC = () => {
     },
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     if (values.correctAnswer.answer === values.wrongAnswer.answer) {
-      console.log('Die Antworten dürfen nicht gleich sein.')
-      return
+      console.log('The answers must not be the same.')
+      setAnswerError(true)
+    } else {
+      await addDoc(collection(db, 'questions'), {
+        answers: [
+          {
+            correct: values.correctAnswer.correct,
+            title: values.correctAnswer.answer,
+          },
+          {
+            correct: values.wrongAnswer.correct,
+            title: values.wrongAnswer.answer,
+          },
+        ],
+        categories: values.category,
+        explanation: values.explanation,
+        question: values.question,
+        type: 'trueFalse',
+      })
+      console.log(values)
+      window.location.reload()
     }
-    console.log(values)
+  }
+
+  const openD = (value: string) => {
+    if (value === 'n') {
+      setOpen(!open)
+      setError(false)
+    }
+  }
+
+  async function addCat() {
+    if (allCategories.length > 0) {
+      for (const category of allCategories) {
+        if (category !== categoryName && categoryName.length > 1) {
+          console.log(category)
+          await addDoc(collection(db, 'categories'), { title: categoryName })
+          setOpen(false)
+          break
+        } else {
+          setError(true)
+          console.log(categoryName + " already exists or isn't long enough")
+          break
+        }
+      }
+    } else {
+      await addDoc(collection(db, 'categories'), { title: categoryName })
+      setOpen(false)
+    }
+  }
+
+  const errorStyle = {
+    display: error ? 'block' : 'none',
+  }
+
+  const answerErrorStyle = {
+    display: answerError ? 'block' : 'none',
   }
 
   return (
@@ -102,22 +168,29 @@ const TrueFalseForm: React.FC = () => {
           render={({ field }) => (
             <FormItem className=' w-1/3'>
               <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+
+              <Select
+                onValueChange={(value) => {
+                  field.onChange(value)
+                  openD(value)
+                }}
+                defaultValue={field.value}
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder='Select a category' />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
-                  {allCategories.map((category) => (
-                    <SelectItem value={category}>{category}</SelectItem>
-                  ))}
-                  <SelectItem value='False'>False</SelectItem>
+                <SelectContent className=' h-48'>
+                  <SelectGroup>
+                    {allCategories.map((category) => (
+                      <SelectItem value={category}>{category}</SelectItem>
+                    ))}
+
+                    <SelectItem value='n'>Add a new category...</SelectItem>
+                  </SelectGroup>
                 </SelectContent>
               </Select>
-              <FormDescription>
-                Decide whether true is correct or false.
-              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -192,6 +265,12 @@ const TrueFalseForm: React.FC = () => {
             )}
           />
         </div>
+        <p
+          className='mb-4 text-sm font-medium text-destructive'
+          style={answerErrorStyle}
+        >
+          Answers must be different
+        </p>
         <FormField
           control={form.control}
           name='explanation'
@@ -208,7 +287,30 @@ const TrueFalseForm: React.FC = () => {
             </FormItem>
           )}
         />
+
         <Button type='submit'>Submit</Button>
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add a new category</DialogTitle>
+              <DialogDescription>
+                <Input
+                  className='my-4'
+                  name='categoryName'
+                  placeholder='Category name...'
+                  onChange={(e) => setCategoryName(e.target.value)}
+                />
+                <p
+                  className='mb-4 text-sm font-medium text-destructive'
+                  style={errorStyle}
+                >
+                  Category already exists or isn't long enough
+                </p>
+                <Button onClick={addCat}>Create category</Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </form>
     </Form>
   )
