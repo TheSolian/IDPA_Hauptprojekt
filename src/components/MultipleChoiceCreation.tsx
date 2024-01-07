@@ -129,18 +129,22 @@ const MultipleChoiceCreation: React.FC = () => {
       await addDoc(collection(db, 'questions'), {
         answers: [
           {
+            id: 1,
             correct: values.answer1.correct,
             title: values.answer1.answer,
           },
           {
+            id: 2,
             correct: values.answer2.correct,
             title: values.answer2.answer,
           },
           {
+            id: 3,
             correct: values.answer3.correct,
             title: values.answer3.answer,
           },
           {
+            id: 4,
             correct: values.answer4.correct,
             title: values.answer4.answer,
           },
