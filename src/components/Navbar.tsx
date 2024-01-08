@@ -11,7 +11,7 @@ const Navbar: React.FC<NavbarProps> = ({}) => {
     <header>
       <div className='flex justify-between items-center p-4'>
         <Link to='/' className='text-3xl font-bold'>
-          Fake Bookyto
+          EcoMania
         </Link>
         <div className='flex items-center gap-4'>
           <ThemeButton variant={'ghost'} />
