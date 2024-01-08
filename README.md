@@ -2,7 +2,7 @@
 
 ## Installation
 
-1. Laden Sie sich den Source Code [hier](https://github.com/TheSolian/IDPA_Vorprojekt/releases/tag/1.0.0) herunter.
+1. Laden Sie sich den Source Code NOCH HINZUFÜGEN herunter.
 
 2. Um alle Abhängigkeiten herunterzuladen, führen Sie folgenden Befehl aus.
 
