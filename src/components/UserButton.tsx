@@ -25,7 +25,7 @@ const UserButton: React.FC<UserButtonProps> = ({}) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>
         <Button size={'icon'}>{renderName() || 'User'}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

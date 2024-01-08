@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import { auth, db } from './firebase'
 import HomePage from './pages/HomePage'
+import ImportQuestionPage from './pages/ImportQuestionPage'
+import QuizPage from './pages/QuizPage'
 import RootLayout from './pages/RootLayout'
 import AuthLayout from './pages/auth/AuthLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -46,8 +48,12 @@ function App() {
       <Routes>
         <Route path='/' element={<RootLayout />}>
           <Route index element={<HomePage />} />
+          <Route path='/quiz' element={<QuizPage />} />
           <Route path='logout' element={<LogoutPage />} />
+          <Route path='dashboard/import' element={<ImportQuestionPage />} />
         </Route>
+        {/* <Route path='dashboard' element={<div></div>}> */}
+        {/* </Route> */}
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
         </Route>
@@ -57,6 +63,3 @@ function App() {
 }
 
 export default App
-function dispatch(arg0: any) {
-  throw new Error('Function not implemented.')
-}
