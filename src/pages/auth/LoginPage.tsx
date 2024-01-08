@@ -14,7 +14,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as z from 'zod'
 
 interface LoginPageProps {}
@@ -77,6 +77,10 @@ const LoginPage: React.FC<LoginPageProps> = ({}) => {
               </FormItem>
             )}
           />
+          <Link to ="/login/signup">
+          Sign up?
+          </Link>
+
           <div className='flex justify-end'>
             <Button>Login</Button>
           </div>
