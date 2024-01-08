@@ -1,8 +1,10 @@
 import Quiz from '@/components/Quiz'
+import { buttonVariants } from '@/components/ui/button'
 import { db } from '@/firebase'
 import { shuffle } from '@/lib/utils'
 import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 
 type QuizPageProps = {}
 
@@ -48,7 +50,17 @@ const QuizPage: React.FC<QuizPageProps> = ({}) => {
     <div>
       {questions.length !== 0 ? (
         <Quiz questions={questions} categories={categories} />
-      ) : null}
+      ) : (
+        <div className='flex flex-col items-center gap-4 pt-28'>
+          <h1 className='text-3xl font-semibold text-center'>Empty Category</h1>
+          <div className='flex flex-col'>
+            <p className='text-lg'>There are no question in this category.</p>
+            <Link to='/' className={buttonVariants({ variant: 'link' })}>
+              Homepage
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

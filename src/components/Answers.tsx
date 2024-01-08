@@ -51,7 +51,7 @@ const Answers: React.FC<AnswersProps> = ({
           onClick={() => handleAnswerClick(answer, index)}
           disabled={hasCheckedAnswers}
           className={cn(
-            'bg-gray-500 text-white text-2xl aspect-[8/4] rounded-lg',
+            'bg-gray-500 text-white text-2xl aspect-[8/3] rounded-lg',
             {
               'border-4 border-primary': answer.selected && !hasCheckedAnswers,
               'bg-green-500': hasCheckedAnswers && answer.correct,
