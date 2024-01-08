@@ -7,7 +7,7 @@
 2. Um alle Abhängigkeiten herunterzuladen, führen Sie folgenden Befehl aus.
 
 ```bash
-npm i
+npm install
 ```
 
 4. Um das Projekt dann zu starten, führen Sie folgenden Befehl aus.
