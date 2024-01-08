@@ -1,17 +1,12 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
 import {
-  collection,
-  getDocs,
-  doc,
-  addDoc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-} from 'firebase/firestore'
-import { db } from '@/firebase'
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -30,16 +25,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { useEffect, useState } from 'react'
+import { db } from '@/firebase'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+} from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
+import * as z from 'zod'
+import ManageCategoryDialog from './ManageCategoryDialog'
 import { Checkbox } from './ui/checkbox'
 
 interface EditPageProps {}
@@ -109,26 +110,27 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
   const navigate = useNavigate()
   const [question, setQuestion] = useState<Question>()
   const [multiQuestion, setMultiQuestion] = useState<Question>()
-  const [allCategories, setAllCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [open, setOpen] = useState<boolean>(false)
-  const [categoryName, setCategoryName] = useState<string>('')
-  const [error, setError] = useState<boolean>(false)
   const [answerError, setAnswerError] = useState<boolean>(false)
 
   async function getCategories() {
-    const cats = await getDocs(collection(db, 'categories'))
-    const categoriesArray: string[] = []
+    const docs = await getDocs(collection(db, 'categories'))
+    const categories: Category[] = []
 
-    cats.forEach((doc) => {
-      categoriesArray.push(doc.data().title)
+    docs.forEach((doc) => {
+      categories.push({
+        id: doc.id,
+        title: doc.data().title,
+      })
     })
 
-    setAllCategories(categoriesArray)
+    setCategories(categories)
   }
 
   useEffect(() => {
     getCategories()
-    console.log(allCategories)
+    console.log(categories)
   }, [open])
 
   async function getData() {
@@ -151,6 +153,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
       }
     }
   }
+
   useEffect(() => {
     getData()
   }, [])
@@ -158,7 +161,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
   const trueFalseForm = useForm<z.infer<typeof trueFalseFormSchema>>({
     resolver: zodResolver(trueFalseFormSchema),
     defaultValues: {
-      category: question?.categories,
+      category: question?.categories.forEach((category) => ''),
       correctAnswer: {
         answer: question?.answers[0].title,
         correct: question?.answers[0].correct,
@@ -335,35 +338,16 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
     }
   }
 
-  const openD = (value: string) => {
-    if (value === 'n') {
-      setOpen(!open)
-      setError(false)
-    }
+  async function addCategory(category: Omit<Category, 'id'>) {
+    const ref = collection(db, 'categories')
+    await addDoc(ref, { title: category.title })
+    getCategories()
   }
 
-  async function addCat() {
-    if (allCategories.length > 0) {
-      for (const category of allCategories) {
-        if (category !== categoryName && categoryName.length > 1) {
-          console.log(category)
-          await addDoc(collection(db, 'categories'), { title: categoryName })
-          setOpen(false)
-          break
-        } else {
-          setError(true)
-          console.log(categoryName + " already exists or isn't long enough")
-          break
-        }
-      }
-    } else {
-      await addDoc(collection(db, 'categories'), { title: categoryName })
-      setOpen(false)
-    }
-  }
-
-  const errorStyle = {
-    display: error ? 'block' : 'none',
+  async function deleteCategory(category: Category) {
+    const ref = doc(db, 'categories', category.id)
+    await deleteDoc(ref)
+    getCategories()
   }
 
   const answerErrorStyle = {
@@ -378,39 +362,50 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
             onSubmit={trueFalseForm.handleSubmit(onSubmit)}
             className='space-y-8 w-1/2 mx-auto mt-8'
           >
-            <FormField
-              control={trueFalseForm.control}
-              name='category'
-              render={({ field }) => (
-                <FormItem className=' w-1/3'>
-                  <FormLabel>Category</FormLabel>
+            <div className='flex-col gap-4 justify-end'>
+              <FormField
+                control={trueFalseForm.control}
+                name='category'
+                render={({ field }) => (
+                  <FormItem className=' w-1/3'>
+                    <FormLabel>Category</FormLabel>
 
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      openD(value)
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={question.categories} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className=' h-48'>
-                      <SelectGroup>
-                        {allCategories.map((category) => (
-                          <SelectItem value={category}>{category}</SelectItem>
-                        ))}
-
-                        <SelectItem value='n'>Add a new category...</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value)
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={question?.categories} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className=' h-48'>
+                        <SelectGroup>
+                          {categories.map((category) => (
+                            <SelectItem
+                              value={category.title}
+                              key={category.id}
+                            >
+                              {category.title}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                variant='link'
+                type='button'
+                onClick={() => setOpen(true)}
+              >
+                Manage Categories
+              </Button>
+            </div>
             <FormField
               control={trueFalseForm.control}
               name='question'
@@ -534,28 +529,13 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
               </Dialog>
             </div>
 
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add a new category</DialogTitle>
-                  <DialogDescription>
-                    <Input
-                      className='my-4'
-                      name='categoryName'
-                      placeholder='Category name...'
-                      onChange={(e) => setCategoryName(e.target.value)}
-                    />
-                    <p
-                      className='mb-4 text-sm font-medium text-destructive'
-                      style={errorStyle}
-                    >
-                      Category already exists or isn't long enough
-                    </p>
-                    <Button onClick={addCat}>Create category</Button>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+            <ManageCategoryDialog
+              open={open}
+              setOpen={setOpen}
+              categories={categories}
+              add={addCategory}
+              delete={deleteCategory}
+            />
           </form>
         </Form>
       ) : (
@@ -564,38 +544,50 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
             onSubmit={multipleChoiceForm.handleSubmit(onMultipleChoiceSubmit)}
             className='space-y-8 w-1/2 mx-auto mt-8 mb-8'
           >
-            <FormField
-              control={multipleChoiceForm.control}
-              name='category'
-              render={({ field }) => (
-                <FormItem className=' w-1/3'>
-                  <FormLabel>Category</FormLabel>
-                  <Select
-                    onValueChange={(value) => {
-                      field.onChange(value)
-                      openD(value)
-                    }}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder={multiQuestion?.categories} />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className='h-48'>
-                      <SelectGroup>
-                        {allCategories.map((category) => (
-                          <SelectItem value={category}>{category}</SelectItem>
-                        ))}
+            <div className='flex-col gap-4 justify-end'>
+              <FormField
+                control={trueFalseForm.control}
+                name='category'
+                render={({ field }) => (
+                  <FormItem className=' w-1/3'>
+                    <FormLabel>Category</FormLabel>
 
-                        <SelectItem value='n'>Add a new category...</SelectItem>
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value)
+                      }}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder={question?.categories} />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent className=' h-48'>
+                        <SelectGroup>
+                          {categories.map((category) => (
+                            <SelectItem
+                              value={category.title}
+                              key={category.id}
+                            >
+                              {category.title}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button
+                variant='link'
+                type='button'
+                onClick={() => setOpen(true)}
+              >
+                Manage Categories
+              </Button>
+            </div>
             <FormField
               control={multipleChoiceForm.control}
               name='question'
@@ -817,29 +809,14 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
                 </DialogContent>
               </Dialog>
             </div>
-            <Dialog open={open} onOpenChange={setOpen}>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add a new category</DialogTitle>
-                  <DialogDescription>
-                    <Input
-                      className='my-4'
-                      name='categoryName'
-                      placeholder='Category name...'
-                      onChange={(e) => setCategoryName(e.target.value)}
-                    />
-                    <p
-                      className='mb-4 text-sm font-medium text-destructive'
-                      style={errorStyle}
-                    >
-                      Category already exists or isn't long enough
-                    </p>
-                    <Button onClick={addCat}>Create category</Button>
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
           </form>
+          <ManageCategoryDialog
+            open={open}
+            setOpen={setOpen}
+            categories={categories}
+            add={addCategory}
+            delete={deleteCategory}
+          />
         </Form>
       )}
     </>

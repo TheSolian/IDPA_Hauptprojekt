@@ -30,12 +30,6 @@ const UserButton: React.FC<UserButtonProps> = ({}) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>
-          <Link to='/profile' className='flex gap-2'>
-            <Icons.profile />
-            <span>Profile</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
           <Link to='/statistics' className='flex gap-2'>
             <Icons.statistics />
             <span>Stats</span>

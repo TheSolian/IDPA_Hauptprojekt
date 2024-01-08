@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react'
-import { collection, getDocs, doc } from 'firebase/firestore'
-import { db } from '@/firebase'
-import useCurrentUser from '@/hooks/useCurrentUser'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
   TooltipProvider,
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { ScrollArea } from '@/components/ui/scroll-area'
+import { db } from '@/firebase'
+import useCurrentUser from '@/hooks/useCurrentUser'
+import { collection, getDocs } from 'firebase/firestore'
+import React, { useEffect, useState } from 'react'
 
 interface QuizHistoryProps {
   onStatsChange: (totalRight: number, totalWrong: number) => void
@@ -33,6 +33,7 @@ const QuizHistory: React.FC<QuizHistoryProps> = ({ onStatsChange }) => {
     )
 
     const newQuizzes = querySnapshot.docs.map((doc) => doc.data() as Quiz)
+    console.log(newQuizzes[0].playedAt)
     setQuizzes(newQuizzes)
   }
 
@@ -63,9 +64,12 @@ const QuizHistory: React.FC<QuizHistoryProps> = ({ onStatsChange }) => {
             No quizzes played yet
           </div>
         ) : (
-          quizzes.map((quiz) => (
-            <div className='flex flex-row w-11/12 justify-between text-lg p-8 my-3 mx-auto rounded-sm border bg-popover hover:bg-accent'>
-              <div>{quiz.playedAt.toDate().toLocaleDateString('de-DE')}</div>
+          quizzes.map((quiz, index) => (
+            <div
+              className='flex flex-row w-11/12 justify-between text-lg p-8 my-3 mx-auto rounded-sm border bg-popover hover:bg-accent'
+              key={index}
+            >
+              <div>{quiz.playedAt.toDate().toDateString('de-DE')}</div>
               <div>
                 {calculateRightFalseRatio(
                   quiz.stats.rightAnswers,

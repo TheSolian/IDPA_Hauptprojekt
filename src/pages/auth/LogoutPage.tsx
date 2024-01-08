@@ -13,7 +13,7 @@ const LogoutPage: React.FC<LogoutPageProps> = ({}) => {
       .then(() => {
         navigate('/login')
       })
-      .catch((error) => {
+      .catch(() => {
         navigate('/')
       })
   }, [])

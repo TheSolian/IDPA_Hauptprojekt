@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom'
-import { Separator } from './ui/separator'
 
 interface DashboardNavbarProps {}
 
@@ -20,12 +19,12 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({}) => {
         </Link>
         <Link to='/dashboard/questions'>
           <div className='text-center py-3 bg-popover hover:bg-accent rounded-sm border'>
-            View questions
+            View Questions
           </div>
         </Link>
         <Link to='/dashboard/students'>
           <div className='text-center py-3 bg-popover hover:bg-accent rounded-sm border'>
-            View Quizzes
+            View Students
           </div>
         </Link>
       </div>

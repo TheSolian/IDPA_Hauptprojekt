@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import useCurrentUser from '@/hooks/useCurrentUser'
 import QuizHistory from '@/components/QuizHistory'
+import React, { useEffect, useState } from 'react'
 
 interface StatsPageProps {}
 
 const StatsPage: React.FC<StatsPageProps> = ({}) => {
-  const user = useCurrentUser()
   const [rightPercentage, setRightPercentage] = useState<string | null>(null)
   const [totalStats, setTotalStats] = useState<{
     totalRight: number

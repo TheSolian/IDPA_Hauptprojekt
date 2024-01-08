@@ -6,7 +6,7 @@ import {
   User,
 } from 'lucide-react'
 
-type Icon = LucideIcon
+export type Icon = LucideIcon
 
 export const Icons = {
   profile: User,

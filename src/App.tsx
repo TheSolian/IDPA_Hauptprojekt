@@ -11,7 +11,6 @@ import UserCreation from './components/UserCreation'
 import { auth, db } from './firebase'
 import DashboardLayout from './pages/DashboardLayout'
 import HomePage from './pages/HomePage'
-import ImportQuestionPage from './pages/ImportQuestionPage'
 import QuizPage from './pages/QuizPage'
 import RootLayout from './pages/RootLayout'
 import StatsPage from './pages/StatsPage'
@@ -72,8 +71,6 @@ function App() {
           </Route>
           <Route path='statistics' element={<StatsPage />} />
         </Route>
-        {/* <Route path='dashboard' element={<div></div>}> */}
-        {/* </Route> */}
         <Route path='login' element={<AuthLayout />}>
           <Route index element={<LoginPage />} />
           <Route path='signup' element={<UserCreation />} />

@@ -1,16 +1,17 @@
-import { useParams } from 'react-router'
-import React, { useEffect, useState } from 'react'
-import { collection, getDocs, doc, getDoc } from 'firebase/firestore'
-import { db } from '@/firebase'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   Tooltip,
   TooltipContent,
-  TooltipTrigger,
   TooltipProvider,
+  TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { Button } from './ui/button'
+import { db } from '@/firebase'
+import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
+import { ChevronLeft } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router'
 import { Link } from 'react-router-dom'
+import { buttonVariants } from './ui/button'
 
 type StudentsStatsProps = {}
 
@@ -18,10 +19,6 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
   const { id } = useParams()
   const [quizzes, setQuizzes] = useState<Quiz[]>([])
   const [rightPercentage, setRightPercentage] = useState<string | null>(null)
-  const [totalStats, setTotalStats] = useState<{
-    totalRight: number
-    totalWrong: number
-  }>({ totalRight: 0, totalWrong: 0 })
   const [username, setUsername] = useState<string>()
 
   function calculateRightFalseRatio(
@@ -79,8 +76,12 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
   return (
     <>
       <div className='ml-20 mt-20'>
-        <Link to='/dashboard/students'>
-          <Button>Back</Button>
+        <Link
+          to='/dashboard/students'
+          className={buttonVariants({ variant: 'link' })}
+        >
+          <ChevronLeft />
+          Back
         </Link>
       </div>
       <div className='mx-auto'>
@@ -100,9 +101,12 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
         {quizzes.length === 0 ? (
           <div className='text-2xl text-center mt-8'>No quizzes played yet</div>
         ) : (
-          quizzes.map((quiz) => (
-            <div className='flex flex-row w-11/12 justify-between text-lg p-8 my-3 mx-auto rounded-sm border bg-popover hover:bg-accent'>
-              <div>{quiz.playedAt.toDate().toLocaleDateString('de-DE')}</div>
+          quizzes.map((quiz, index) => (
+            <div
+              key={index}
+              className='flex flex-row w-11/12 justify-between text-lg p-8 my-3 mx-auto rounded-sm border bg-popover hover:bg-accent'
+            >
+              <div>{new Date(quiz.playedAt).toLocaleDateString('de-DE')}</div>
               <div>
                 {calculateRightFalseRatio(
                   quiz.stats.rightAnswers,

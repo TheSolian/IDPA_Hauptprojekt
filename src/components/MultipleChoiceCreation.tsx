@@ -1,12 +1,5 @@
-import { useEffect, useState } from 'react'
-import { Checkbox } from '@/components/ui/checkbox'
-import { collection, getDocs, doc, addDoc } from 'firebase/firestore'
-import { db } from '@/firebase'
-import { Label } from '@/components/ui/label'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Form,
   FormControl,
@@ -20,20 +13,18 @@ import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  SelectGroup,
 } from '@/components/ui/select'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogTrigger,
-} from '@/components/ui/dialog'
-import { useNavigate } from 'react-router-dom'
+import { db } from '@/firebase'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import * as z from 'zod'
+import ManageCategoryDialog from './ManageCategoryDialog'
 
 const formSchema = z.object({
   category: z.string().min(2, {
@@ -97,26 +88,27 @@ const MultipleChoiceCreation: React.FC = () => {
     },
   })
 
-  const [allCategories, setAllCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const [open, setOpen] = useState<boolean>(false)
-  const [categoryName, setCategoryName] = useState<string>('')
-  const [error, setError] = useState<boolean>(false)
   const [answerError, setAnswerError] = useState<boolean>(false)
 
   async function getCategories() {
-    const cats = await getDocs(collection(db, 'categories'))
-    const categoriesArray: string[] = []
+    const docs = await getDocs(collection(db, 'categories'))
+    const categories: Category[] = []
 
-    cats.forEach((doc) => {
-      categoriesArray.push(doc.data().title)
+    docs.forEach((doc) => {
+      categories.push({
+        id: doc.id,
+        title: doc.data().title,
+      })
     })
 
-    setAllCategories(categoriesArray)
+    setCategories(categories)
   }
 
   useEffect(() => {
     getCategories()
-    console.log(allCategories)
+    console.log(categories)
   }, [open])
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -164,35 +156,16 @@ const MultipleChoiceCreation: React.FC = () => {
     }
   }
 
-  const openD = (value: string) => {
-    if (value === 'n') {
-      setOpen(!open)
-      setError(false)
-    }
+  async function addCategory(category: Omit<Category, 'id'>) {
+    const ref = collection(db, 'categories')
+    await addDoc(ref, { title: category.title })
+    getCategories()
   }
 
-  async function addCat() {
-    if (allCategories.length > 0) {
-      for (const category of allCategories) {
-        if (category !== categoryName && categoryName.length > 1) {
-          console.log(category)
-          await addDoc(collection(db, 'categories'), { title: categoryName })
-          setOpen(false)
-          break
-        } else {
-          setError(true)
-          console.log(categoryName + " already exists or isn't long enough")
-          break
-        }
-      }
-    } else {
-      await addDoc(collection(db, 'categories'), { title: categoryName })
-      setOpen(false)
-    }
-  }
-
-  const errorStyle = {
-    display: error ? 'block' : 'none',
+  async function deleteCategory(category: Category) {
+    const ref = doc(db, 'categories', category.id)
+    await deleteDoc(ref)
+    getCategories()
   }
 
   const answerErrorStyle = {
@@ -204,40 +177,44 @@ const MultipleChoiceCreation: React.FC = () => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className='space-y-8 w-1/2 mx-auto mt-8 mb-8'
+          className='space-y-8 w-2/3 mx-auto mt-8 mb-8'
         >
-          <FormField
-            control={form.control}
-            name='category'
-            render={({ field }) => (
-              <FormItem className=' w-1/3'>
-                <FormLabel>Category</FormLabel>
-                <Select
-                  onValueChange={(value) => {
-                    field.onChange(value)
-                    openD(value)
-                  }}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='Select a category' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent className='h-48'>
-                    <SelectGroup>
-                      {allCategories.map((category) => (
-                        <SelectItem value={category}>{category}</SelectItem>
-                      ))}
-
-                      <SelectItem value='n'>Add a new category...</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className='flex-col gap-4 justify-end'>
+            <FormField
+              control={form.control}
+              name='category'
+              render={({ field }) => (
+                <FormItem className=' w-1/3'>
+                  <FormLabel>Category</FormLabel>
+                  <Select
+                    onValueChange={(value) => {
+                      field.onChange(value)
+                    }}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Select a category' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className='h-48'>
+                      <SelectGroup>
+                        {categories.map((category) => (
+                          <SelectItem value={category.title} key={category.id}>
+                            {category.title}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <Button variant='link' type='button' onClick={() => setOpen(true)}>
+              Manage Categories
+            </Button>
+          </div>
           <FormField
             control={form.control}
             name='question'
@@ -419,29 +396,14 @@ const MultipleChoiceCreation: React.FC = () => {
             )}
           />
           <Button type='submit'>Submit</Button>
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Add a new category</DialogTitle>
-                <DialogDescription>
-                  <Input
-                    className='my-4'
-                    name='categoryName'
-                    placeholder='Category name...'
-                    onChange={(e) => setCategoryName(e.target.value)}
-                  />
-                  <p
-                    className='mb-4 text-sm font-medium text-destructive'
-                    style={errorStyle}
-                  >
-                    Category already exists or isn't long enough
-                  </p>
-                  <Button onClick={addCat}>Create category</Button>
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
         </form>
+        <ManageCategoryDialog
+          open={open}
+          setOpen={setOpen}
+          categories={categories}
+          add={addCategory}
+          delete={deleteCategory}
+        />
       </Form>
     </>
   )

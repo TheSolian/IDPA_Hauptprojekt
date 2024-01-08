@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { collection, getDocs, doc } from 'firebase/firestore'
-import { db } from '@/firebase'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-  TooltipProvider,
-} from '@/components/ui/tooltip'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Button } from '@/components/ui/button'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { db } from '@/firebase'
+import { collection, getDocs } from 'firebase/firestore'
+import { Eye } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface QuestionListProps {}
@@ -45,12 +40,17 @@ const QuestionList: React.FC<QuestionListProps> = ({}) => {
           <div className='text-2xl text-center mt-8'>No questions yet</div>
         ) : (
           questions.map((item) => (
-            <div className='flex justify-between w-11/12 text-lg p-8 my-3 mx-auto rounded-sm border bg-popover hover:bg-accent'>
+            <div className='flex justify-between w-11/12 text-lg p-8 my-3 mx-auto rounded-sm border bg-popover'>
               <div className='flex items-center text-xl'>
                 {item.question.question}
               </div>
               <div>
-                <Button onClick={() => handleViewClick(item.id)}>View</Button>
+                <Button
+                  onClick={() => handleViewClick(item.id)}
+                  variant='ghost'
+                >
+                  <Eye />
+                </Button>
               </div>
             </div>
           ))

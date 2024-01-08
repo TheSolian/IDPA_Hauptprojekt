@@ -6,7 +6,7 @@ type User = {
 }
 
 type Quiz = {
-  playedAt: Date
+  playedAt: any
   questions: Question[]
   categories: string[]
   stats: {
@@ -27,4 +27,9 @@ type Answer = {
   id: number
   title: string
   correct: boolean
+}
+
+type Category = {
+  id: string
+  title: string
 }

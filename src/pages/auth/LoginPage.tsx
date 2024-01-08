@@ -1,5 +1,5 @@
 import { ThemeButton } from '@/components/ThemeButton'
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -9,7 +9,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { auth, db } from '@/firebase'
+import { auth } from '@/firebase'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import React from 'react'
@@ -51,6 +51,7 @@ const LoginPage: React.FC<LoginPageProps> = ({}) => {
           onSubmit={form.handleSubmit(onSubmit)}
           className='flex flex-col gap-4 border p-4 min-w-[600px] rounded-xl'
         >
+          <h1 className='text-3xl'>Login</h1>
           <FormField
             control={form.control}
             name='email'
@@ -77,11 +78,14 @@ const LoginPage: React.FC<LoginPageProps> = ({}) => {
               </FormItem>
             )}
           />
-          <Link to ="/login/signup">
-          Sign up?
-          </Link>
 
           <div className='flex justify-end'>
+            <Link
+              to='/login/signup'
+              className={buttonVariants({ variant: 'link' })}
+            >
+              Sign up?
+            </Link>
             <Button>Login</Button>
           </div>
         </form>
