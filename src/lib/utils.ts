@@ -27,3 +27,24 @@ export function arraysEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
 
   return true
 }
+
+export function formatPercentage(percentage: number): string {
+  const formatter = new Intl.NumberFormat('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })
+  return formatter.format(percentage)
+}
+
+export function calculatePercentage(
+  rightAnswers: number,
+  wrongAnswers: number
+): string | null {
+  if (rightAnswers === 0 && wrongAnswers === 0) {
+    return null
+  } else {
+    return formatPercentage(
+      (rightAnswers / (rightAnswers + wrongAnswers)) * 100
+    )
+  }
+}

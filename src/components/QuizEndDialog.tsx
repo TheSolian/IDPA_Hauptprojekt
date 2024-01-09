@@ -1,3 +1,4 @@
+import { calculatePercentage, formatPercentage } from '@/lib/utils'
 import React from 'react'
 import { QuizStatus } from './Quiz'
 import { Button } from './ui/button'
@@ -20,14 +21,6 @@ const QuizEndDialog: React.FC<QuizEndDialogProps> = ({
   summary,
   saveQuiz,
 }) => {
-  function formatPercentage(percentage: number): string {
-    const formatter = new Intl.NumberFormat('de-DE', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
-    return formatter.format(percentage)
-  }
-
   return (
     <Dialog open={open}>
       <DialogContent noCloseButton>
@@ -40,12 +33,8 @@ const QuizEndDialog: React.FC<QuizEndDialogProps> = ({
             <div>Right answers: {summary.rightAnswers}</div>
             <div>Wrong answers: {summary.wrongAnswers}</div>
             <div>
-              Percentage:{' '}
-              {formatPercentage(
-                (100 / (summary.rightAnswers + summary.wrongAnswers)) *
-                  summary.rightAnswers
-              )}
-              %
+              <span>Percentage: </span>
+              {calculatePercentage(summary.rightAnswers, summary.wrongAnswers)}%
             </div>
           </div>
         </div>

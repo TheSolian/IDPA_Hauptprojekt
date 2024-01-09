@@ -1,35 +1,32 @@
+import { QuizStatus } from '@/components/Quiz'
 import QuizHistory from '@/components/QuizHistory'
+import { calculatePercentage } from '@/lib/utils'
 import React, { useEffect, useState } from 'react'
 
 interface StatsPageProps {}
 
 const StatsPage: React.FC<StatsPageProps> = ({}) => {
   const [rightPercentage, setRightPercentage] = useState<string | null>(null)
-  const [totalStats, setTotalStats] = useState<{
-    totalRight: number
-    totalWrong: number
-  }>({ totalRight: 0, totalWrong: 0 })
+  const [quizResults, setQuizResults] = useState<QuizStatus>({
+    rightAnswers: 0,
+    wrongAnswers: 0,
+  })
 
   const handleStatsChange = (totalRight: number, totalWrong: number) => {
-    setTotalStats({ totalRight, totalWrong })
+    setQuizResults({ rightAnswers: totalRight, wrongAnswers: totalWrong })
   }
 
   useEffect(() => {
-    CalculatePercentage(totalStats.totalRight, totalStats.totalWrong)
-  }, [totalStats.totalRight, totalStats.totalWrong])
-
-  function CalculatePercentage(totalRight: number, totalWrong: number) {
-    if (totalRight === 0 && totalWrong === 0) {
-      setRightPercentage(null)
-    } else {
-      let percentage = (totalRight / (totalRight + totalWrong)) * 100
-      setRightPercentage(percentage.toFixed(2))
-    }
-  }
+    const result = calculatePercentage(
+      quizResults.rightAnswers,
+      quizResults.wrongAnswers
+    )
+    setRightPercentage(result)
+  }, [quizResults])
 
   return (
     <>
-      {totalStats.totalRight + totalStats.totalWrong !== 0 ? (
+      {quizResults.rightAnswers + quizResults.wrongAnswers !== 0 ? (
         <h1 className=' text-4xl text-center my-32'>
           {rightPercentage === null
             ? 'Calculating...'

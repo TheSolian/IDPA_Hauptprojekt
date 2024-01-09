@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { db } from '@/firebase'
+import { calculatePercentage } from '@/lib/utils'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import { ChevronLeft } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
@@ -21,10 +22,7 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
   const [rightPercentage, setRightPercentage] = useState<string | null>(null)
   const [username, setUsername] = useState<string>()
 
-  function calculateRightFalseRatio(
-    rightAnswers: number,
-    wrongAnswers: number
-  ) {
+  function renderRightWrongRatio(rightAnswers: number, wrongAnswers: number) {
     return `Right/False Ratio ${rightAnswers}/${wrongAnswers}`
   }
 
@@ -58,17 +56,8 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
       totalRight += quiz.stats.rightAnswers
       totalWrong += quiz.stats.wrongAnswers
     })
-    CalculatePercentage(totalRight, totalWrong)
+    setRightPercentage(calculatePercentage(totalRight, totalWrong))
   }, [quizzes])
-
-  function CalculatePercentage(totalRight: number, totalWrong: number) {
-    if (totalRight === 0 && totalWrong === 0) {
-      setRightPercentage(null)
-    } else {
-      let percentage = (totalRight / (totalRight + totalWrong)) * 100
-      setRightPercentage(percentage.toFixed(2))
-    }
-  }
 
   function CreateCategoriesList(categories: string[]) {
     return categories.join(', ')
@@ -108,7 +97,7 @@ const StudentsStats: React.FC<StudentsStatsProps> = ({}) => {
             >
               <div>{new Date(quiz.playedAt).toLocaleDateString('de-DE')}</div>
               <div>
-                {calculateRightFalseRatio(
+                {renderRightWrongRatio(
                   quiz.stats.rightAnswers,
                   quiz.stats.wrongAnswers
                 )}
