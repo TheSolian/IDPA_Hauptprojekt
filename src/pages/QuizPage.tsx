@@ -1,6 +1,6 @@
 import Quiz from '@/components/Quiz'
 import { buttonVariants } from '@/components/ui/button'
-import { db } from '@/firebase'
+import { db } from '@/lib/firebase'
 import { shuffle } from '@/lib/utils'
 import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'

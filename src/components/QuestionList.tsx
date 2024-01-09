@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { db } from '@/firebase'
+import { db } from '@/lib/firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import { Eye } from 'lucide-react'
 import React, { useEffect, useState } from 'react'

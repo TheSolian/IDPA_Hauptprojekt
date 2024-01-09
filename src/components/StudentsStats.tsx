@@ -5,7 +5,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { db } from '@/firebase'
+import { db } from '@/lib/firebase'
 import { calculatePercentage } from '@/lib/utils'
 import { collection, doc, getDoc, getDocs } from 'firebase/firestore'
 import { ChevronLeft } from 'lucide-react'

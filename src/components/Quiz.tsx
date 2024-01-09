@@ -1,5 +1,5 @@
-import { db } from '@/firebase'
 import useCurrentUser from '@/hooks/useCurrentUser'
+import { db } from '@/lib/firebase'
 import { arraysEqual, shuffle } from '@/lib/utils'
 import { addDoc, collection } from 'firebase/firestore'
 import { CheckCircle2, XCircle } from 'lucide-react'

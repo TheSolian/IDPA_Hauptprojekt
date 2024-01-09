@@ -5,8 +5,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { db } from '@/firebase'
 import useCurrentUser from '@/hooks/useCurrentUser'
+import { db } from '@/lib/firebase'
 import { collection, getDocs } from 'firebase/firestore'
 import React, { useEffect, useState } from 'react'
 

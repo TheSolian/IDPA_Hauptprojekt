@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { db } from '@/firebase'
+import { db } from '@/lib/firebase'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createUserWithEmailAndPassword, getAuth } from 'firebase/auth'
 import { doc, setDoc } from 'firebase/firestore'

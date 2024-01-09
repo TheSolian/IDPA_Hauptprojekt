@@ -1,6 +1,6 @@
-import { auth } from '@/firebase'
 import useCurrentUser from '@/hooks/useCurrentUser'
-import { Icons } from '@/icons'
+import { auth } from '@/lib/firebase'
+import { Icons } from '@/lib/icons'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from './ui/button'

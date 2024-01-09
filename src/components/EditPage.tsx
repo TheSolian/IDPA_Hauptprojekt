@@ -25,7 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { db } from '@/firebase'
+import { db } from '@/lib/firebase'
 import { zodResolver } from '@hookform/resolvers/zod'
 import {
   addDoc,
