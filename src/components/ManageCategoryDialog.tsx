@@ -1,3 +1,4 @@
+import { useTheme } from '@/lib/theme-provider'
 import { cn } from '@/lib/utils'
 import { Trash2 } from 'lucide-react'
 import React from 'react'
@@ -27,6 +28,8 @@ const ManageCategoryDialog: React.FC<ManageCategoryDialogProps> = ({
   add,
   delete: deleteCategory,
 }) => {
+  const { theme } = useTheme()
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
@@ -38,7 +41,8 @@ const ManageCategoryDialog: React.FC<ManageCategoryDialogProps> = ({
             <div
               key={category.id}
               className={cn('flex items-center pl-4 justify-between', {
-                'bg-gray-200': index % 2 === 0,
+                'bg-gray-200': index % 2 === 0 && theme === 'light',
+                'bg-primary': index % 2 === 0 && theme === 'dark',
               })}
             >
               <div>{category.title}</div>

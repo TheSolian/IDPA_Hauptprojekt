@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -36,9 +36,10 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore'
+import { ChevronLeft } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import * as z from 'zod'
 import ManageCategoryDialog from './ManageCategoryDialog'
 import { Checkbox } from './ui/checkbox'
@@ -160,7 +161,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
   const trueFalseForm = useForm<z.infer<typeof trueFalseFormSchema>>({
     resolver: zodResolver(trueFalseFormSchema),
     defaultValues: {
-      category: question?.categories,
+      category: question?.categories[0] || '',
       correctAnswer: {
         answer: question?.answers[0].title,
         correct: question?.answers[0].correct,
@@ -173,7 +174,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
       question: question?.question,
     },
     values: {
-      category: question?.categories,
+      category: question?.categories[0] || '',
       correctAnswer: {
         answer: question?.answers[0].title,
         correct: question?.answers[0].correct,
@@ -190,7 +191,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
   const multipleChoiceForm = useForm<z.infer<typeof multipleChoiceFormSchema>>({
     resolver: zodResolver(multipleChoiceFormSchema),
     defaultValues: {
-      category: multiQuestion?.categories,
+      category: multiQuestion?.categories[0] || '',
       answer1: {
         answer: multiQuestion?.answers[0].title,
         correct: multiQuestion?.answers[0].correct,
@@ -211,7 +212,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
       question: multiQuestion?.question,
     },
     values: {
-      category: multiQuestion?.categories,
+      category: multiQuestion?.categories[0] || '',
       answer1: {
         answer: multiQuestion?.answers[0].title,
         correct: multiQuestion?.answers[0].correct,
@@ -355,11 +356,20 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
 
   return (
     <>
+      <div className='ml-20 mt-20'>
+        <Link
+          to='/dashboard/questions'
+          className={buttonVariants({ variant: 'link' })}
+        >
+          <ChevronLeft />
+          Back
+        </Link>
+      </div>
       {question?.type === 'trueFalse' ? (
         <Form {...trueFalseForm}>
           <form
             onSubmit={trueFalseForm.handleSubmit(onSubmit)}
-            className='space-y-8 w-1/2 mx-auto mt-8'
+            className='space-y-8 w-2/3 mx-auto mt-8'
           >
             <div className='flex-col gap-4 justify-end'>
               <FormField
@@ -541,7 +551,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
         <Form {...multipleChoiceForm}>
           <form
             onSubmit={multipleChoiceForm.handleSubmit(onMultipleChoiceSubmit)}
-            className='space-y-8 w-1/2 mx-auto mt-8 mb-8'
+            className='space-y-8 w-2/3 mx-auto mt-8 mb-8'
           >
             <div className='flex-col gap-4 justify-end'>
               <FormField
