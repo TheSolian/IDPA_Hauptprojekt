@@ -130,7 +130,6 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
 
   useEffect(() => {
     getCategories()
-    console.log(categories)
   }, [open])
 
   async function getData() {
@@ -161,7 +160,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
   const trueFalseForm = useForm<z.infer<typeof trueFalseFormSchema>>({
     resolver: zodResolver(trueFalseFormSchema),
     defaultValues: {
-      category: question?.categories.forEach((category) => ''),
+      category: question?.categories,
       correctAnswer: {
         answer: question?.answers[0].title,
         correct: question?.answers[0].correct,
@@ -546,7 +545,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
           >
             <div className='flex-col gap-4 justify-end'>
               <FormField
-                control={trueFalseForm.control}
+                control={multipleChoiceForm.control}
                 name='category'
                 render={({ field }) => (
                   <FormItem className=' w-1/3'>
@@ -786,7 +785,7 @@ const EditPage: React.FC<EditPageProps> = ({}) => {
             <div className='flex gap-8'>
               <Button type='submit'>Update</Button>
               <Dialog>
-                <DialogTrigger>
+                <DialogTrigger asChild>
                   <Button
                     className='bg-destructive text-destructive-foreground hover:bg-red-800'
                     type='button'
